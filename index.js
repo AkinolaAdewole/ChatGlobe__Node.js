@@ -13,6 +13,8 @@ const server = http.createServer(app);
 //   res.send({ message: "Hello world" }); // JSON response
 // });
 
+app.use(express.static('public'));
+
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html'); // Serve an HTML file
 });
