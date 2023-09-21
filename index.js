@@ -4,11 +4,14 @@ const app = express();
 import http from 'https'
 const server = http.createServer(app);
 
-const PORT= process.env.PORT || 3500
+// app.get('/', (req,res)=>{
+//     res.send({message:"Hello world"});
+// });
+app.get('/', (req,res)=>{
+    res.sendFile(__dirname + '/index.html')
+});
+
+const PORT= process.env.PORT 
 server.listen(PORT, ()=>{
     console.log(`Server is listening on port ${PORT}`);
-})
-
-app.get('/', (req,res)=>{
-    res.send('Hello World')
 })
