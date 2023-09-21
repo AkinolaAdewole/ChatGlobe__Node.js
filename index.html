@@ -2,36 +2,186 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat Box</title>
-    <link rel="stylesheet" href="./public/style.css">
+    <link rel="stylesheet" href="/pubic/style.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 70vh;
+    background: #F8F8F8;
+    font-family: 'Roboto', sans-serif;
+}
+section.chat_section {
+    width: 700px;
+    max-width: 90%;
+    background: #fff;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+.code {
+    padding: 20px;
+    background: #f1f1f1;
+    display: flex;
+    align-items: center;
+}
+.code h1 {
+    text-transform: uppercase;
+    font-size: 20px;
+    color: #444;
+    margin-left: 10px;
+}
+.message_area{
+    height: 500px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    padding-top: 40px;
+}
+textarea {
+    width: 100%;
+    border: none;
+    padding: 20px;
+    font-size: 16px;
+    outline: none;
+    background: #FBFBFB;
+}
+
+.message {
+    padding: 20px; 
+    border-radius: 4px; 
+    margin-bottom: 40px;
+    max-width: 300px;
+    position: relative;
+}
+.incoming {
+    background: #8F8BE8;
+    color: #fff;  
+}
+.outgoing {
+    background: #e9eafd;
+    color: #787986;
+    margin-left: auto;
+}
+.message h4 {
+    position: absolute;
+    top: -20px;
+    left: 0;
+    color: #333;
+    font-size: 14px;
+}
+    </style>
 </head>
+
 <body>
     <section class="chat_section">
         <div class="code">
-            <img height="40" src="./public/NicePng.png" alt=""> 
-
-            <h1>Chat Globe</h1>
+            <img height="40" src="/pubic/chat.png" alt="">
+            <h1>CHATBOX</h1>
         </div>
-
         <div class="message_area">
-            <div class="incoming_message">
-                <h4>Jordan</h4>
-                <p>Lorem ipsum ng elit. Assumenda, aspernatur rem !</p>
+            <div class="incoming message">
+                <h4>Anubhav</h4>
+                <p>Hello.</p>
             </div>
-
-            <div class="outgoing_message">
-                <h4>Eminem</h4>
-                <p>Lorem OPsop</p>
+            
+            <div class="outgoing message">
+                <h4>Anirudh</h4>
+                <p>hi</p>
+            </div>
+            <div class="outgoing message">
+                <h4>Anirudh</h4>
+                <p>how are you?</p>
+            </div>
+            <div class="incoming message">
+                <h4>Anubhav</h4>
+                <p>Im good how are you?</p>
+            </div>
+            <div class="outgoing message">
+                <h4>Anirudh</h4>
+                <p>please subscribe to Simplilearn Youtube channel</p>
             </div>
         </div>
-
         <div>
-            <textarea id="" cols="30" rows="10" placeholder="Write Something"></textarea>
+            <textarea id="textarea" cols="30" rows="10" placeholder="Write something"></textarea>
         </div>
-    </section>
-    
+        </section>
+    <script src="/socket.io/socket.io.js"></script>
 
-    <script src="/public/client.js"></script>
+    <script>
+            // Include the Socket.IO library
+            const socket = io();
+
+            // Add event handlers
+            socket.on('connect', () => {
+            console.log('Connected to server');
+            });
+
+            socket.on('disconnect', () => {
+            console.log('Disconnected from server');
+            });
+
+            // You can also emit custom events from the client to the server
+            socket.emit('chatMessage', 'Hello, server!');
+    </script>
+
+    <script>
+
+            let name;
+            let textarea = document.querySelector('#textarea')
+            let messageArea = document.querySelector('.message_area')
+            do{
+                name = prompt('Please enter your name: ')
+            } while(!name)
+
+            textarea.addEventListener('keyup', (e) => {
+                if(e.key ==="Enter"){
+                    sendMessage(e.target.value)
+                }
+            })
+
+            function sendMessage(message){
+                let msg ={
+                    user:name,
+                    message:message
+                }
+
+                appendMessage(msg, 'outgoing')
+
+                socket.emit('message', {
+                    user:name,
+                    message:message
+                })
+            }
+
+            function appendMessage(msg, type) {
+                let mainDiv = document.createElement('div')
+                let className = type
+                mainDiv.classList.add(className, 'message')
+
+                let markup =`
+                <h4>${msg.user}/</h4>
+                <p>${msg.message}</p>
+                `
+
+                mainDiv.innerHTML =markup
+
+                messageArea.appendChild(mainDiv)
+            }
+
+            socket.on("message" , (msg) => {
+                console.log(msg)
+            })
+    </script>
 </body>
 </html>
